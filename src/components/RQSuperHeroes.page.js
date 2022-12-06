@@ -30,6 +30,10 @@ export const RQSuperHeroesPage = () => {
       // enabled: false, // disables fetching onMount, using the refetch from useQuery can manually trigger though
       onSuccess, // uses callback
       onError, // uses callback
+      select: (data) => {
+        const superHeroNames = data.data.map((hero) => hero.name);
+        return superHeroNames;
+      }, // data will be this value from now, can be filtered/transformed anyhow
     }
   );
 
@@ -45,8 +49,11 @@ export const RQSuperHeroesPage = () => {
     <>
       <h2>RQ Superheroes</h2>
       <button onClick={refetch}>Fetch heroes</button>
-      {data?.data.map((hero) => (
+      {/*       {data?.data.map((hero) => (
         <div key={hero.name}>{hero.name}</div>
+      ))} */}
+      {data.map((heroName) => (
+        <div key={heroName}>{heroName}</div>
       ))}
     </>
   );
