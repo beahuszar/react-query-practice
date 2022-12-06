@@ -17,9 +17,9 @@ export const useSuperHeroesData = (onSuccess, onError) => {
     // enabled: false, // disables fetching onMount, using the refetch from useQuery can manually trigger though
     onSuccess, // uses callback
     onError, // uses callback
-    select: (data) => {
-      const superHeroNames = data.data.map((hero) => hero.name);
-      return superHeroNames;
-    }, // data will be this value from now, can be filtered/transformed anyhow
+    /*     select: (data) => {
+          const superHeroNames = data.data.map((hero) => hero.name);
+          return superHeroNames;
+        }, // data will be this value from now, can be filtered/transformed anyhow */
   });
 };
