@@ -7,8 +7,16 @@ const fetchSuperHeroes = () => {
 };
 
 export const RQSuperHeroesPage = () => {
+  const onSuccess = (data) => {
+    console.log("perform side effect after data fetching", data);
+  };
+
+  const onError = (error) => {
+    console.log("perform side effect after encountering error", error);
+  };
+
   /* isLoading remains false when finished, isFetching changes to true when cache is updated */
-  const { isLoading, data, isError, error, isFetching } = useQuery(
+  const { isLoading, data, isError, error, isFetching, refetch } = useQuery(
     "super-heroes",
     fetchSuperHeroes,
     {
@@ -17,10 +25,15 @@ export const RQSuperHeroesPage = () => {
       // staleTime: 30000, // 0 is default, controls when the next network request can run in the background
       // refetchOnMount: true, // true: when data is stale, false: never, always: at every mount
       // refetchOnWindowFocus: true, // default is true, rest is same as on mount
+      // refetchInterval: 2000 // false is default, refeteches data in given ms intervals === polling, pauses when window is not in focus
+      // refetchIntervalInBackground: true // default is false, enforces refetchInterval also when window is not in focus
+      // enabled: false, // disables fetching onMount, using the refetch from useQuery can manually trigger though
+      onSuccess, // uses callback
+      onError, // uses callback
     }
   );
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return <h2>Loading...</h2>;
   }
 
@@ -31,6 +44,7 @@ export const RQSuperHeroesPage = () => {
   return (
     <>
       <h2>RQ Superheroes</h2>
+      <button onClick={refetch}>Fetch heroes</button>
       {data?.data.map((hero) => (
         <div key={hero.name}>{hero.name}</div>
       ))}
