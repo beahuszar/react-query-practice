@@ -30,15 +30,38 @@ export const useSuperHeroesData = (onSuccess, onError) => {
 export const useAddSuperHeroData = () => {
   const queryClient = useQueryClient();
   return useMutation(addSuperHero, {
-    onSuccess: (data) => {
-      // queryClient.invalidateQueries("super-heroes"); // triggers refetch in the super-heroes query, automatically updating the client in the browser
+    /*     onSuccess: (data) => {
+          // queryClient.invalidateQueries("super-heroes"); // triggers refetch in the super-heroes query, automatically updating the client in the browser
+          queryClient.setQueryData("super-heroes", (oldQueryData) => {
+            // updates query cache directly and saves extra network request compared to invalidateQueries
+            return {
+              ...oldQueryData,
+              data: [...oldQueryData.data, data.data], // data.data === mutation response received from server (the posted/updated data)
+            };
+          });
+        }, */
+    onMutate: async (newHero) => {
+      await queryClient.cancelQueries("super-heroes"); // cancel any outgoing refetches, so they don't overwrite our optimistic update
+      const previousHeroData = queryClient.getQueryData("super-heroes");
       queryClient.setQueryData("super-heroes", (oldQueryData) => {
-        // updates query cache directly and saves extra network request compared to invalidateQueries
         return {
           ...oldQueryData,
-          data: [...oldQueryData.data, data.data], // data.data === mutation response received from server (the posted/updated data)
+          data: [
+            ...oldQueryData.data,
+            { id: oldQueryData.data.length + 1, ...newHero },
+          ],
         };
       });
+      return {
+        previousHeroData, // this will be returned in case the mutation runs on an error and added to the onError fn's context prop
+      };
+    }, // called before the mutation function is fired and is passed the same inputs the mutation function would receive
+    onError: (_error, _hero, context) => {
+      queryClient.getQueryData("super-heroes", context.previousHeroData);
+    },
+    onSettled: () => {
+      // called when the mutation is either successful or runs on an error
+      queryClient.invalidateQueries("super-heroes"); // ensure client state is in sync with server state
     },
   });
 };
