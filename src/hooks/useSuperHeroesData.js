@@ -7,7 +7,6 @@ const fetchSuperHeroes = () => {
 
 export const useSuperHeroesData = (onSuccess, onError) => {
   return useQuery("super-heroes", fetchSuperHeroes, {
-    // https://www.youtube.com/watch?v=A3gN4ji5p6E&list=PLC3y8-rFHvwjTELCrPrcZlo6blLBUspd2&index=8
     // cacheTime: 5000 // 5min is default, after this value the query is garbage collected
     // staleTime: 30000, // 0 is default, controls when the next network request can run in the background
     // refetchOnMount: true, // true: when data is stale, false: never, always: at every mount
