@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useSuperHeroesData } from "../hooks/useSuperHeroesData";
+import {
+  useAddSuperHeroData,
+  useSuperHeroesData,
+} from "../hooks/useSuperHeroesData";
 
 export const RQSuperHeroesPage = () => {
+  const [name, setName] = useState("");
+  const [alterEgo, setAlterEgo] = useState("");
+
   const onSuccess = (data) => {
     console.log("perform side effect after data fetching", data);
   };
@@ -15,6 +21,19 @@ export const RQSuperHeroesPage = () => {
   const { isLoading, data, isError, error, isFetching, refetch } =
     useSuperHeroesData(onSuccess, onError);
 
+  const {
+    mutate: addHero,
+    isLoading: isLoadingHero,
+    isError: isHeroErro,
+    error: heroError,
+  } = useAddSuperHeroData(); // returns the props we need for posting
+
+  const handleAddHeroClick = () => {
+    console.log({ name, alterEgo });
+    const hero = { name, alterEgo };
+    addHero(hero);
+  };
+
   if (isLoading || isFetching) {
     return <h2>Loading...</h2>;
   }
@@ -26,6 +45,19 @@ export const RQSuperHeroesPage = () => {
   return (
     <>
       <h2>RQ Superheroes</h2>
+      <div>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <input
+          type="text"
+          value={alterEgo}
+          onChange={(e) => setAlterEgo(e.target.value)}
+        />
+        <button onClick={handleAddHeroClick}>Add Hero</button>
+      </div>
       <button onClick={refetch}>Fetch heroes</button>
       {data?.data.map((hero) => (
         <div key={hero.id}>
