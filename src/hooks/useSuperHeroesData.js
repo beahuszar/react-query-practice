@@ -30,8 +30,15 @@ export const useSuperHeroesData = (onSuccess, onError) => {
 export const useAddSuperHeroData = () => {
   const queryClient = useQueryClient();
   return useMutation(addSuperHero, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("super-heroes"); // triggers refetch in the super-heroes query, automatically updating the client in the browser
+    onSuccess: (data) => {
+      // queryClient.invalidateQueries("super-heroes"); // triggers refetch in the super-heroes query, automatically updating the client in the browser
+      queryClient.setQueryData("super-heroes", (oldQueryData) => {
+        // updates query cache directly and saves extra network request compared to invalidateQueries
+        return {
+          ...oldQueryData,
+          data: [...oldQueryData.data, data.data], // data.data === mutation response received from server (the posted/updated data)
+        };
+      });
     },
   });
 };
