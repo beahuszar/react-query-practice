@@ -19,6 +19,11 @@
       "name": "flash",
       "alterEgo": "barry allen",
       "id": 4
+    },
+    {
+      "name": "shazam",
+      "alterEgo": "billy batson",
+      "id": 5
     }
   ],
   "friends": [

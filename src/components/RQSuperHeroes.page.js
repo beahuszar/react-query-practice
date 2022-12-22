@@ -24,7 +24,7 @@ export const RQSuperHeroesPage = () => {
   const {
     mutate: addHero,
     isLoading: isLoadingHero,
-    isError: isHeroErro,
+    isError: isHeroError,
     error: heroError,
   } = useAddSuperHeroData(); // returns the props we need for posting
 
